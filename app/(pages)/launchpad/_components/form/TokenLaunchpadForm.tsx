@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Connection } from "@solana/web3.js";
 import { WalletContextState } from "@solana/wallet-adapter-react";
 import { createToken } from "@/actions/CreateToken";
+import { AutosizeTextarea } from "@/components/ui/autoresize-textarea";
 
 const TokenLaunchpadForm = ({
   connection,
@@ -34,6 +35,7 @@ const TokenLaunchpadForm = ({
       image: "",
       initial_supply: undefined,
       symbol: "",
+      description: "",
     },
   });
 
@@ -102,6 +104,16 @@ const TokenLaunchpadForm = ({
               <FormDescription>Provide image for you token.</FormDescription>
               <FormMessage />
             </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <AutosizeTextarea
+              placeholder="Describe your token"
+              maxHeight={200}
+            />
           )}
         />
         <Button type={"submit"}>Submit</Button>

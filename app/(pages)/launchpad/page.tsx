@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React from "react";
 import TokenLaunchpadForm from "./_components/form/TokenLaunchpadForm";
@@ -11,13 +11,13 @@ const page = (props: Props) => {
   const wallet = useWallet();
 
   return (
-    <div className="translate-y-1/3">
+    <div className="min-w-96 h-screen flex flex-col items-center justify-center">
       <div>
-        <h1 className="text-5xl font-semibold tracking-tighter text-center bg-gradient-to-t from-zinc-400 to-white bg-clip-text text-transparent">
+        <h1 className="text-7xl font-semibold tracking-tighter text-center bg-gradient-to-t from-zinc-400 to-white bg-clip-text text-transparent mb-6">
           Token Launchpad
         </h1>
       </div>
-      <div className="max-w-2xl mx-auto flex flex-col gap-8">
+      <div className="w-2/3">
         <TokenLaunchpadForm connection={connection} wallet={wallet} />
       </div>
     </div>

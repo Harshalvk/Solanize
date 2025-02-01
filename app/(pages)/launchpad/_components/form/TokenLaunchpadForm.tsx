@@ -22,6 +22,7 @@ import { createToken } from "@/actions/CreateToken";
 import { AutosizeTextarea } from "@/components/ui/autoresize-textarea";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { FireConfetti } from "@/lib/FireConfetti";
 
 const TokenLaunchpadForm = ({
   connection,
@@ -35,7 +36,7 @@ const TokenLaunchpadForm = ({
     defaultValues: {
       name: "",
       image: "",
-      initial_supply: undefined,
+      initial_supply: "",
       symbol: "",
       description: "",
     },
@@ -46,6 +47,8 @@ const TokenLaunchpadForm = ({
     mutationFn: createToken,
     onSuccess: () => {
       toast.success("Token created!", { id: "create-token" });
+      form.reset();
+      FireConfetti();
     },
     onError: () => {
       toast.error("Failed to create token", { id: "create-token" });
@@ -140,6 +143,7 @@ const TokenLaunchpadForm = ({
               placeholder="Describe your token"
               maxHeight={200}
               className="resize-none"
+              {...field}
             />
           )}
         />

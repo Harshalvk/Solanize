@@ -1,7 +1,7 @@
 "use client";
 
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import React, { useEffect, useState } from "react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,21 +19,14 @@ import {
 } from "./ui/dropdown-menu";
 import Image from "next/image";
 import { Wallet } from "lucide-react";
+import { WalletName } from "@solana/wallet-adapter-base";
 
-type Props = {};
-
-const WalletConnect = (props: Props) => {
-  const { connection } = useConnection();
+const WalletConnect = () => {
   const { select, wallets, publicKey, disconnect, connecting } = useWallet();
 
   const [open, setOpen] = useState(false);
-  const [userWalletAddress, setUserWalletAddress] = useState("");
 
-  useEffect(() => {
-    setUserWalletAddress(publicKey?.toBase58()!);
-  }, [publicKey]);
-
-  const handleWalletSelect = (walletName: any) => {
+  const handleWalletSelect = (walletName: WalletName) => {
     if (walletName) {
       try {
         select(walletName);
@@ -54,22 +47,22 @@ const WalletConnect = (props: Props) => {
         <div>
           {!publicKey ? (
             <DialogTrigger asChild>
-              <Button className="w-full">
+              <Button variant={"secondary"} className="w-full border">
                 <Wallet size={20} />
                 {connecting ? "Connection..." : "Connect Wallet"}
               </Button>
             </DialogTrigger>
           ) : (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+              <DropdownMenuTrigger asChild className="w-full">
                 <Button className="w-full">
                   <div className="truncate md:w-[150px] w-[100px]">
                     {publicKey.toBase58()}
                   </div>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-full">
-                <DropdownMenuItem>
+              <DropdownMenuContent className="w-full p-0">
+                <DropdownMenuItem asChild>
                   <Button
                     onClick={handleDisconnect}
                     className="w-full"

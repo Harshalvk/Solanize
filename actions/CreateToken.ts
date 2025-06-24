@@ -15,12 +15,13 @@ import {
   getAssociatedTokenAddressSync,
   getMintLen,
   LENGTH_SIZE,
-  TOKEN_2022_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
   TYPE_SIZE,
 } from "@solana/spl-token";
 import { createInitializeInstruction, pack } from "@solana/spl-token-metadata";
 import { WalletContextState } from "@solana/wallet-adapter-react";
 import { uploadMetadata } from "./UploadMetadata";
+import { Metadata } from "@/lib/types";
 
 export async function createToken({
   values,
@@ -33,7 +34,7 @@ export async function createToken({
 }) {
   const mintKeypair = Keypair.generate();
 
-  const sMetadata = {
+  const sMetadata: Metadata = {
     name: values.name,
     symbol: values.symbol,
     description: values.description,
@@ -62,7 +63,7 @@ export async function createToken({
     mintKeypair.publicKey,
     wallet.publicKey!,
     false,
-    TOKEN_2022_PROGRAM_ID
+    TOKEN_PROGRAM_ID
   );
 
   const transaction = new Transaction().add(
@@ -71,23 +72,23 @@ export async function createToken({
       newAccountPubkey: mintKeypair.publicKey,
       space: mintLen,
       lamports,
-      programId: TOKEN_2022_PROGRAM_ID,
+      programId: TOKEN_PROGRAM_ID,
     }),
     createInitializeMetadataPointerInstruction(
       mintKeypair.publicKey,
       wallet.publicKey,
       mintKeypair.publicKey,
-      TOKEN_2022_PROGRAM_ID
+      TOKEN_PROGRAM_ID
     ),
     createInitializeMintInstruction(
       mintKeypair.publicKey,
       9,
       wallet.publicKey!,
       null,
-      TOKEN_2022_PROGRAM_ID
+      TOKEN_PROGRAM_ID
     ),
     createInitializeInstruction({
-      programId: TOKEN_2022_PROGRAM_ID,
+      programId: TOKEN_PROGRAM_ID,
       mint: mintKeypair.publicKey,
       metadata: mintKeypair.publicKey,
       name: metadata.name,
@@ -101,7 +102,7 @@ export async function createToken({
       associatedToken,
       wallet.publicKey!,
       mintKeypair.publicKey,
-      TOKEN_2022_PROGRAM_ID
+      TOKEN_PROGRAM_ID
     ),
     createMintToInstruction(
       mintKeypair.publicKey,
@@ -109,7 +110,7 @@ export async function createToken({
       wallet.publicKey!,
       +values.initial_supply,
       [],
-      TOKEN_2022_PROGRAM_ID
+      TOKEN_PROGRAM_ID
     )
   );
 
@@ -119,5 +120,15 @@ export async function createToken({
   ).blockhash;
   transaction.partialSign(mintKeypair);
 
-  await wallet.sendTransaction(transaction, connection);
+  const txSig = await wallet.sendTransaction(transaction, connection);
+
+  console.log("from server actionlike:::", {
+    accountPubkey: mintKeypair.publicKey.toBase58(),
+    transactionSignature: txSig,
+  });
+
+  return {
+    accountPubkey: mintKeypair.publicKey.toBase58(),
+    transactionSignature: txSig,
+  };
 }

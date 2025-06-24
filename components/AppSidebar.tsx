@@ -2,8 +2,6 @@
 
 import { CircleEqual, Hand } from "lucide-react";
 import Link from "next/link";
-import React from "react";
-import { buttonVariants } from "./ui/button";
 import { usePathname } from "next/navigation";
 import WalletConnect from "./WalletConnect";
 
@@ -14,32 +12,29 @@ const routes = [
     icon: Hand,
   },
   {
-    href: "liquidity",
-    label: "Liquidity Pool",
+    href: "overview",
+    label: "Token overview",
     icon: CircleEqual,
   },
 ];
 
 export default function AppSidebar() {
   const pathname = usePathname();
-  const activeRoute =
-    routes.find(
-      (route) => route.href.length > 0 && pathname.includes(route.href)
-    ) || routes[0];
 
   return (
-    <div className="hidden relative md:block min-w-[220px] max-w-[220px] h-screen overflow-hidden w-full bg-primary/15 dark:bg-secondary/30 dark:text-foreground text-muted-foreground border-r border-separate lg:flex lg:flex-col lg:justify-between py-3 px-1">
-      <div className="flex flex-col gap-1 justify-start">
+    <div className="hidden relative min-w-[220px] max-w-[220px] h-full overflow-hidden w-full bg-muted-foreground/10 dark:text-foreground text-muted-foreground border-r border-separate md:flex flex-col justify-between py-3 px-1">
+      <div className="text-sm space-y-2">
         {routes.map((route) => (
           <Link
             href={route.href}
             key={route.href}
-            className={buttonVariants({
-              variant: activeRoute.href === route.href ? "secondary" : "ghost",
-              className: "w-full rounded-md",
-            })}
+            className={`flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted transition ${
+              pathname.includes(route.href)
+                ? "dark:bg-zinc-900 bg-zinc-100 border"
+                : ""
+            }`}
           >
-            <route.icon size={20} />
+            <route.icon size={14} />
             {route.label}
           </Link>
         ))}

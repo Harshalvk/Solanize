@@ -15,13 +15,13 @@ import {
   getAssociatedTokenAddressSync,
   getMintLen,
   LENGTH_SIZE,
-  TOKEN_PROGRAM_ID,
+  TOKEN_2022_PROGRAM_ID,
   TYPE_SIZE,
 } from "@solana/spl-token";
 import { createInitializeInstruction, pack } from "@solana/spl-token-metadata";
 import { WalletContextState } from "@solana/wallet-adapter-react";
-import { uploadMetadata } from "./UploadMetadata";
 import { Metadata } from "@/lib/types";
+import axios from "axios";
 
 export async function createToken({
   values,
@@ -41,16 +41,20 @@ export async function createToken({
     image: values.image,
   };
 
-  const metadataRes = await uploadMetadata(sMetadata);
+  const { data: metadataRes } = await axios.post(
+    "/api/upload-metadata",
+    sMetadata
+  );
 
   const metadata = {
     mint: mintKeypair.publicKey,
     name: values.name,
     symbol: values.symbol,
     image: values.image,
-    uri: metadataRes,
+    uri: metadataRes.data,
     additionalMetadata: [],
   };
+  console.log("want to check if exists 3333", metadata);
 
   const mintLen = getMintLen([ExtensionType.MetadataPointer]);
   const metadataLen = TYPE_SIZE + LENGTH_SIZE + pack(metadata).length;
@@ -58,12 +62,13 @@ export async function createToken({
   const lamports = await connection.getMinimumBalanceForRentExemption(
     mintLen + metadataLen
   );
+  console.log("want to check if exists 4444", lamports);
 
   const associatedToken = getAssociatedTokenAddressSync(
     mintKeypair.publicKey,
     wallet.publicKey!,
     false,
-    TOKEN_PROGRAM_ID
+    TOKEN_2022_PROGRAM_ID
   );
 
   const transaction = new Transaction().add(
@@ -72,23 +77,23 @@ export async function createToken({
       newAccountPubkey: mintKeypair.publicKey,
       space: mintLen,
       lamports,
-      programId: TOKEN_PROGRAM_ID,
+      programId: TOKEN_2022_PROGRAM_ID,
     }),
     createInitializeMetadataPointerInstruction(
       mintKeypair.publicKey,
       wallet.publicKey,
       mintKeypair.publicKey,
-      TOKEN_PROGRAM_ID
+      TOKEN_2022_PROGRAM_ID
     ),
     createInitializeMintInstruction(
       mintKeypair.publicKey,
       9,
       wallet.publicKey!,
       null,
-      TOKEN_PROGRAM_ID
+      TOKEN_2022_PROGRAM_ID
     ),
     createInitializeInstruction({
-      programId: TOKEN_PROGRAM_ID,
+      programId: TOKEN_2022_PROGRAM_ID,
       mint: mintKeypair.publicKey,
       metadata: mintKeypair.publicKey,
       name: metadata.name,
@@ -102,7 +107,7 @@ export async function createToken({
       associatedToken,
       wallet.publicKey!,
       mintKeypair.publicKey,
-      TOKEN_PROGRAM_ID
+      TOKEN_2022_PROGRAM_ID
     ),
     createMintToInstruction(
       mintKeypair.publicKey,
@@ -110,7 +115,7 @@ export async function createToken({
       wallet.publicKey!,
       +values.initial_supply,
       [],
-      TOKEN_PROGRAM_ID
+      TOKEN_2022_PROGRAM_ID
     )
   );
 

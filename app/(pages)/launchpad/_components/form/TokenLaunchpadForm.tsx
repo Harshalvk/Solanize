@@ -30,6 +30,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Image from "next/image";
 import axios from "axios";
+import { cn } from "@/lib/utils";
 
 const TokenLaunchpadForm = ({
   connection,
@@ -84,7 +85,6 @@ const TokenLaunchpadForm = ({
         "Content-Type": "multipart/form-data",
       },
     });
-
     return res.data;
   };
 
@@ -96,8 +96,8 @@ const TokenLaunchpadForm = ({
         if (file) {
           setUploadingImage(true);
           const uploaded = await uploadImage(file);
-          if (!uploaded?.url) throw new Error("upload failed");
-          url = uploaded.ulr;
+          if (!uploaded) throw new Error("upload failed");
+          url = uploaded.url;
         }
 
         setUploadingImage(false);
@@ -107,7 +107,10 @@ const TokenLaunchpadForm = ({
           connection,
           wallet,
         });
-      } catch {
+      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        console.error(error.message);
         toast.error("Failed to upload image", { id: "create-token" });
       }
     },
@@ -191,6 +194,10 @@ const TokenLaunchpadForm = ({
                       alt="token image"
                       width={100}
                       height={100}
+                      className={cn(
+                        "rounded-lg aspect-auto h-52 w-auto",
+                        isPending || uploadingImage ? "brightness-50" : ""
+                      )}
                     />
                   ) : (
                     <Input

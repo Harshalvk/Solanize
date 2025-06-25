@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TokenLaunchpadForm from "./_components/form/TokenLaunchpadForm";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { Info } from "lucide-react";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 const LaunchPadPage = () => {
   const { connection } = useConnection();
@@ -12,14 +13,26 @@ const LaunchPadPage = () => {
     string,
     string
   > | null>(null);
+  const [userSOLBalance, setUserSOLBalance] = useState(0);
 
   const formatKey = (key: string) =>
     key
       .replace(/([A-Z])/g, " $1") // Add space before capital letters
       .replace(/^./, (str) => str.toUpperCase()); // Capitalize first letter
 
+  useEffect(() => {
+    if (wallet.publicKey) {
+      const SOL = connection.getAccountInfo(wallet.publicKey);
+      SOL.then((res) => {
+        if (res?.lamports) {
+          setUserSOLBalance(res?.lamports / LAMPORTS_PER_SOL);
+        }
+      });
+    }
+  }, [connection, wallet.publicKey]);
+
   return (
-    <>
+    <div className="">
       <div className="min-w-96 p-4 flex flex-col items-center justify-center border rounded-md bg-muted-foreground/10 gap-6">
         <div className="bg-muted-foreground/10 w-full p-2 border rounded-md flex items-center justify-between">
           <div className="flex gap-2">
@@ -34,11 +47,11 @@ const LaunchPadPage = () => {
           <div>
             <h2 className="text-sm font-bold">Your Balance</h2>
             <h2 className="text-xs text-muted-foreground font-semibold">
-              0.02 SOL
+              {userSOLBalance}
             </h2>
           </div>
         </div>
-        <div className="w-full">
+        <div className="w-full h-full">
           <TokenLaunchpadForm
             connection={connection}
             wallet={wallet}
@@ -57,7 +70,7 @@ const LaunchPadPage = () => {
           ))}
         </div>
       ) : null}
-    </>
+    </div>
   );
 };
 

@@ -8,7 +8,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       <div className="flex flex-1 overflow-hidden">
         <AppSidebar />
-        <div className="flex-1 m-4 rounded-md">{children}</div>
+        <div className="p-4 flex-1 overflow-auto">{children}</div>
       </div>
     </div>
   );

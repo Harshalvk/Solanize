@@ -54,14 +54,14 @@ const WalletConnect = () => {
             </DialogTrigger>
           ) : (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild className="w-full">
-                <Button className="w-full">
+              <DropdownMenuTrigger className="w-full">
+                <Button variant={"outline"} className="w-full">
                   <div className="truncate md:w-[150px] w-[100px]">
                     {publicKey.toBase58()}
                   </div>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-full p-0">
+              <DropdownMenuContent className="p-0">
                 <DropdownMenuItem asChild>
                   <Button
                     onClick={handleDisconnect}

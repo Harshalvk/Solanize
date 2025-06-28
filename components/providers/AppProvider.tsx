@@ -4,6 +4,7 @@ import { ReactNode, useState } from "react";
 import { ThemeProvider } from "./ThemeProvider";
 import WalletContextProvider from "@/app/(pages)/launchpad/_components/Wallet";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "../ui/sonner";
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
@@ -17,6 +18,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         disableTransitionOnChange
       >
         <WalletContextProvider>{children}</WalletContextProvider>
+        <Toaster />
       </ThemeProvider>
     </QueryClientProvider>
   );

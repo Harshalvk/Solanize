@@ -1,6 +1,6 @@
 "use client";
 
-import { ChartNoAxesGantt, CircleEqual, Hand } from "lucide-react";
+import { ChartNoAxesGantt, CircleEqual, Hand, Key } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import WalletConnect from "./WalletConnect";
@@ -20,6 +20,11 @@ const routes = [
     href: "history",
     label: "Transaction History",
     icon: ChartNoAxesGantt,
+  },
+  {
+    href: "authority",
+    label: "Token Authority",
+    icon: Key,
   },
 ];
 
